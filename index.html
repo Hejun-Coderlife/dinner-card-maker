@@ -449,21 +449,27 @@
             ctx.fillText(text, x, y);
         }
 
-        // 绘制镜像文字（Y轴翻转）- 以图片中心为轴翻转
-        function drawMirroredText(ctx, text, x, y, fontSize = 40, color = '#FFFFFF', fontFamily = 'Arial', textAlign = 'center', fontWeight = 'normal', imageHeight = 3000) {
+        // 绘制镜像文字（水平轴翻转 + 垂直轴翻转）- 以图片中心为轴翻转
+        function drawMirroredText(ctx, text, x, y, fontSize = 40, color = '#FFFFFF', fontFamily = 'Arial', textAlign = 'center', fontWeight = 'normal', imageWidth = 2000, imageHeight = 3000) {
             ctx.save(); // 保存当前状态
             ctx.font = `${fontWeight} ${fontSize}px ${fontFamily}`;
             ctx.fillStyle = color;
             ctx.textAlign = textAlign;
             ctx.textBaseline = 'top';
             
-            // 以图片中心为轴进行Y轴翻转
+            // 第一步：以图片中心水平轴为轴进行上下翻转
             const centerY = imageHeight / 2;
             ctx.translate(0, centerY);
             ctx.scale(1, -1);
             ctx.translate(0, -centerY);
             
-            // 绘制文字（使用原始Y坐标，但会被翻转）
+            // 第二步：以图片中心垂直轴为轴进行左右翻转
+            const centerX = imageWidth / 2;
+            ctx.translate(centerX, 0);
+            ctx.scale(-1, 1);
+            ctx.translate(-centerX, 0);
+            
+            // 绘制文字（使用原始坐标，但会被翻转）
             ctx.fillText(text, x, y);
             ctx.restore(); // 恢复状态
         }
@@ -509,8 +515,8 @@
             ctx.restore();
         }
 
-        // 绘制镜像渐变文字（Y轴翻转）- 以图片中心为轴翻转
-        function drawMirroredGradientText(ctx, text, x, y, fontSize = 40, fontFamily = 'Arial', textAlign = 'center', fontWeight = 'normal', imageHeight = 3000, leftColor = '#ffc986', rightColor = '#ffebcb', shadowOffsetX = 0, shadowOffsetY = 0, shadowBlur = 0, shadowColor = 'rgba(0, 0, 0, 0.5)') {
+        // 绘制镜像渐变文字（水平轴翻转 + 垂直轴翻转）- 以图片中心为轴翻转
+        function drawMirroredGradientText(ctx, text, x, y, fontSize = 40, fontFamily = 'Arial', textAlign = 'center', fontWeight = 'normal', imageWidth = 2000, imageHeight = 3000, leftColor = '#ffc986', rightColor = '#ffebcb', shadowOffsetX = 0, shadowOffsetY = 0, shadowBlur = 0, shadowColor = 'rgba(0, 0, 0, 0.5)') {
             if (!text) return;
             
             ctx.save(); // 保存当前状态
@@ -547,13 +553,19 @@
             
             ctx.fillStyle = gradient;
             
-            // 以图片中心为轴进行Y轴翻转
+            // 第一步：以图片中心水平轴为轴进行上下翻转
             const centerY = imageHeight / 2;
             ctx.translate(0, centerY);
             ctx.scale(1, -1);
             ctx.translate(0, -centerY);
             
-            // 绘制文字（使用原始Y坐标，但会被翻转）
+            // 第二步：以图片中心垂直轴为轴进行左右翻转
+            const centerX = imageWidth / 2;
+            ctx.translate(centerX, 0);
+            ctx.scale(-1, 1);
+            ctx.translate(-centerX, 0);
+            
+            // 绘制文字（使用原始坐标，但会被翻转）
             ctx.fillText(text, x, y);
             ctx.restore(); // 恢复状态
         }
@@ -600,15 +612,15 @@
             
             // 绘制姓名（正常 + 镜像，使用渐变）
             drawGradientText(ctx, name || '', nameX, nameY, nameFontSize, 'Arial', textAlign, 'normal', gradientLeftColor, gradientRightColor, shadowOffsetX, shadowOffsetY, shadowBlur, shadowColor);
-            drawMirroredGradientText(ctx, name || '', nameX, nameY, nameFontSize, 'Arial', textAlign, 'normal', height, gradientLeftColor, gradientRightColor, shadowOffsetX, shadowOffsetY, shadowBlur, shadowColor);
+            drawMirroredGradientText(ctx, name || '', nameX, nameY, nameFontSize, 'Arial', textAlign, 'normal', width, height, gradientLeftColor, gradientRightColor, shadowOffsetX, shadowOffsetY, shadowBlur, shadowColor);
             
             // 绘制岗位/职位名称（正常 + 镜像，使用渐变）
             drawGradientText(ctx, position || '', positionX, positionY, positionFontSize, 'Arial', textAlign, 'normal', gradientLeftColor, gradientRightColor, shadowOffsetX, shadowOffsetY, shadowBlur, shadowColor);
-            drawMirroredGradientText(ctx, position || '', positionX, positionY, positionFontSize, 'Arial', textAlign, 'normal', height, gradientLeftColor, gradientRightColor, shadowOffsetX, shadowOffsetY, shadowBlur, shadowColor);
+            drawMirroredGradientText(ctx, position || '', positionX, positionY, positionFontSize, 'Arial', textAlign, 'normal', width, height, gradientLeftColor, gradientRightColor, shadowOffsetX, shadowOffsetY, shadowBlur, shadowColor);
             
             // 绘制英文职位名称（正常 + 镜像，使用细体字体和细体粗细，使用渐变）
             drawGradientText(ctx, engPosition || '', engPositionX, engPositionY, engPositionFontSize, 'Helvetica Neue', textAlign, '300', gradientLeftColor, gradientRightColor, shadowOffsetX, shadowOffsetY, shadowBlur, shadowColor);
-            drawMirroredGradientText(ctx, engPosition || '', engPositionX, engPositionY, engPositionFontSize, 'Helvetica Neue', textAlign, '300', height, gradientLeftColor, gradientRightColor, shadowOffsetX, shadowOffsetY, shadowBlur, shadowColor);
+            drawMirroredGradientText(ctx, engPosition || '', engPositionX, engPositionY, engPositionFontSize, 'Helvetica Neue', textAlign, '300', width, height, gradientLeftColor, gradientRightColor, shadowOffsetX, shadowOffsetY, shadowBlur, shadowColor);
             
             // 转换为Blob
             return new Promise(resolve => {
